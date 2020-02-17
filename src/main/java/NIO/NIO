@@ -1,0 +1,16 @@
+服务端开发步骤：
+  创建ServerSocketChannel,配置为非阻塞
+  绑定监听，配置TCP参数
+  创建独立IO线程，轮寻多路复用器
+  创建Selector，将ServerSocketChannel注册到Selector，监听SelectionKey.ACCEPT
+  启动IO线程，循环体执行Selector.select()方法，轮寻就绪的Channel
+  轮寻到就绪的Channel，对其判断，如果是OP_ACCEPT，则为新客户端接入，使用ServerSocketChannel.accept接受
+  设置新接入的客户端链路SocketChannel为非阻塞，配置TCP参数
+  将SocketChannel注册到Selector，监听OP_READ操作位
+  轮寻的Channel为OP_READ，说明SocketChannel中有新就绪的数据包需要读取，构造ByteBuffer对象，读取数据包
+  轮寻Channel为OP_WRITE，说明还有数据包没有发送，需继续发送
+
+优点：
+  客户端发起连接是异步的，没有可读写道数据不会同步等待，直接返回
+  SocketChannel读写都是异步的
+  线程模型优化，JDKSelector在Linux通过epoll实现，没有连接句柄限制

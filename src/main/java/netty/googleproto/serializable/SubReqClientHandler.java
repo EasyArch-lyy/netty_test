@@ -1,0 +1,54 @@
+package netty.googleproto.serializable;
+
+import io.netty.channel.ChannelHandlerAdapter;
+import io.netty.channel.ChannelHandlerContext;
+import netty.googleproto.protobuf.SubscribeReqProto;
+import netty.googleproto.protobuf.SubscribeRespProto;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SubReqClientHandler extends ChannelHandlerAdapter {
+
+    public SubReqClientHandler(){
+
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx){
+        for(int i=0;i<10;i++){
+            ctx.write(subReq(i));
+        }
+        ctx.flush();
+    }
+
+    private SubscribeReqProto.SubscribeReq subReq(int i){
+        SubscribeReqProto.SubscribeReq.Builder builder=SubscribeReqProto.SubscribeReq.newBuilder();
+        builder.setSubReqID(i);
+        builder.setUserName("Gracey");
+        builder.setProduceName("Netty Book");
+        List<String>address=new ArrayList<String>();
+        address.add("NanJing YuHuaTai");
+        address.add("BeiJing LiuLiChang");
+        address.add("ShenZhen HongShuLin");
+        for(int s=0;s<address.size();s++) {
+            builder.setAddress(address.get(s));
+        }
+        return builder.build();
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg){
+        System.out.println("Receive server response: ["+msg+"]");
+    }
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx)throws Exception{
+        ctx.flush();
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
+        cause.printStackTrace();
+        ctx.close();
+    }
+
+}
