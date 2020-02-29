@@ -1,0 +1,15 @@
+NIO中提供缓冲区java.nio.Buffer
+除Boolean外其余都有对应的缓冲区实现
+ByteBuffer满足NIO编程的需要
+缺点：
+   ByteBuffer长度固定，分配完成不能动态扩展收缩，需要编码的pojo>ByteBuffer容量发生索引越界异常
+   ByteBuffer只有一个标识位置的指针position，读写手工调用flip()和rewind()
+   ByteBuffer的API有限
+
+ByteBuf工作原理
+    提供的功能：
+         7种java基本数据类型，byte数组，ByteBuffer（ByteBuf）的读写
+         缓冲区自身的copy和slice
+         设置网络字节序
+         构造缓冲区实例
+         操作位置指针

@@ -30,6 +30,7 @@ public class TimeClienthandler implements Runnable{
             System.exit(1);
         }
     }
+    @Override
     public void run() {
         try {
             //发送连接请求

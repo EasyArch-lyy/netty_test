@@ -14,3 +14,19 @@
   客户端发起连接是异步的，没有可读写道数据不会同步等待，直接返回
   SocketChannel读写都是异步的
   线程模型优化，JDKSelector在Linux通过epoll实现，没有连接句柄限制
+
+allocate(int capacity) 	从堆空间中分配一个容量大小为capacity的byte数组作为缓冲区的byte数据存储器
+allocateDirect(int capacity) 	是不使用JVM堆栈而是通过操作系统来创建内存块用作缓冲区，它与当前操作系统能够更好的耦合，因此能进一步提高I/O操作速度。但是分配直接缓冲区的系统开销很大，因此只有在缓冲区较大并长期存在，或者需要经常重用时，才使用这种缓冲区
+wrap(byte[] array) 	这个缓冲区的数据会存放在byte数组中，bytes数组或buff缓冲区任何一方中数据的改动都会影响另一方。其实ByteBuffer底层本来就有一个bytes数组负责来保存buffer缓冲区中的数据，通过allocate方法系统会帮你构造一个byte数组
+wrap(byte[] array,
+int offset, int length)
+
+在上一个方法的基础上可以指定偏移量和长度，这个offset也就是包装后byteBuffer的position，而length呢就是limit-position的大小，从而我们可以得到limit的位置为length+position(offset)
+
+  ByteBuffer buffer=ByteBuffer.allocate(88);
+  String value="xxx";
+  buffer.put(value.getBytes());
+  buffer.flip();
+  byte[] vArray =new byte[buffer.remaining()];
+  buffer.get(vArray);
+  String decodeValue=new String(vArray);
